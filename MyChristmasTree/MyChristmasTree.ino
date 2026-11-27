@@ -2,7 +2,11 @@
 #ifdef __AVR__
   #include <avr/power.h>
 #endif
-#define PIN        6
+#if defined(ARDUINO_ARCH_ESP32)
+  #define PIN      1   // ESP32-C3 Mini-1: data on IO1
+#else
+  #define PIN      6   // original Arduino wiring
+#endif
 #define NUMPIXELS 17
 
 typedef uint32_t color_t;
@@ -95,7 +99,9 @@ void randInitReds() {
 }
 
 void setup() {
-  pinMode(13, OUTPUT);
+#if !defined(ARDUINO_ARCH_ESP32)
+  pinMode(13, OUTPUT);  // GPIO12-17 are flash pins on the ESP32-C3, so skip this there
+#endif
 
 #if defined(__AVR_ATtiny85__) && (F_CPU == 16000000)
   clock_prescale_set(clock_div_1);
